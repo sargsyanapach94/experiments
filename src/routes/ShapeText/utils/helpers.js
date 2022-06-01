@@ -1,4 +1,4 @@
-const { abs, PI } = Math;
+const { abs, PI, sign, cos } = Math;
 
 export const degreesToRadians = degrees => degrees * (PI / 180);
 
@@ -12,20 +12,35 @@ export const drawRect = (ctx, bbox, color) => {
   ctx.restore();
 };
 
-export const drawArc = (ctx, attrs) => {
+export const drawArc = (ctx, position, segmentAngle, arcLength, radius) => {
+  const direction = sign(segmentAngle);
+  const absSegmentAngle = abs(segmentAngle);
+  const startAngle = direction > 0 ? (180 - absSegmentAngle) / 2 : 180 + (180 - absSegmentAngle) / 2;
+  const endAngle = startAngle + absSegmentAngle;
+  const arcAttrs = {
+    x: position.x + arcLength / 2,
+    y: position.y - direction * (radius + cos(degreesToRadians(absSegmentAngle / 2)) * radius) / 2,
+    radius,
+    startAngle,
+    endAngle,
+    segmentAngle,
+  };
+
   ctx.save();
   ctx.beginPath();
-  ctx.arc(attrs.x, attrs.y, abs(attrs.radius), degreesToRadians(attrs.startAngle), degreesToRadians(attrs.endAngle));
+  ctx.arc(arcAttrs.x, arcAttrs.y, abs(arcAttrs.radius), degreesToRadians(arcAttrs.startAngle), degreesToRadians(arcAttrs.endAngle));
   ctx.stroke();
   ctx.restore();
+
+  return arcAttrs;
 };
 
 export const drawBBox = (ctx, attrs, measure) => {
   drawRect(ctx, {
-    x1: attrs.position.x + measure.actualBoundingBoxLeft,
-    y1: attrs.position.y - measure.actualBoundingBoxAscent,
-    x2: attrs.position.x + measure.actualBoundingBoxRight,
-    y2: attrs.position.y + measure.actualBoundingBoxDescent,
+    x1: measure.actualBoundingBoxLeft,
+    y1: 0,
+    x2: measure.actualBoundingBoxRight,
+    y2: measure.fontBoundingBoxAscent + measure.actualBoundingBoxDescent,
   }, attrs.color || 'blue');
 };
 
@@ -40,10 +55,10 @@ export const drawBaseLine = (ctx, attrs, measure) => {
 
 export const drawAscAndDesc = (ctx, attrs, measure) => {
   drawRect(ctx, {
-    x1: attrs.position.x + measure.actualBoundingBoxLeft,
-    y1: attrs.position.y - measure.fontBoundingBoxAscent,
-    x2: attrs.position.x + measure.actualBoundingBoxRight,
-    y2: attrs.position.y + measure.fontBoundingBoxDescent,
+    x1: measure.actualBoundingBoxLeft,
+    y1: 0,
+    x2: measure.actualBoundingBoxRight,
+    y2: measure.fontBoundingBoxAscent + measure.actualBoundingBoxDescent,
   }, attrs.color || 'red');
 };
 
@@ -51,13 +66,11 @@ export const drawText = (ctx, attrs, options) => {
   ctx.font = `${attrs.fontSize}px ${attrs.font || 'Archivo Black'}`;
   // ctx.textBaseline = 'middle'
   ctx.fillText(attrs.text, attrs.position.x, attrs.position.y);
-  // const measure = ctx.measureText(text);
   const measure = ctx.measureText(attrs.text);
-  // console.log(measure);
 
-  options?.bbox && drawBBox(ctx, attrs, measure);
-  options?.baseLine && drawBaseLine(ctx, attrs, measure);
-  options?.ascAndDesc && drawAscAndDesc(ctx, attrs, measure);
+  if (options?.bbox) drawBBox(ctx, attrs, measure);
+  if (options?.baseLine) drawBaseLine(ctx, attrs, measure);
+  if (options?.ascAndDesc) drawAscAndDesc(ctx, attrs, measure);
 
   return measure;
 };
@@ -65,12 +78,7 @@ export const drawText = (ctx, attrs, options) => {
 export const loadFont = async (fontName, path) => {
   const junctionFont = await new FontFace(fontName, `url(${path})`);
   if (!junctionFont.family) return;
-  try {
-    const loadedFace = await junctionFont.load();
-    document.fonts.add(loadedFace);
-    return loadedFace;
-  } catch (error) {
-    console.error(error, 'error');
-    throw error;
-  }
+  const loadedFace = await junctionFont.load();
+  document.fonts.add(loadedFace);
+  return loadedFace;
 };

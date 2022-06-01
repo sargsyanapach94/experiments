@@ -44,6 +44,7 @@ module.exports = {
     'import/no-unresolved': 0,
     'no-bitwise': 0,
     'no-plusplus': 0,
+    'no-trailing-spaces': 0,
     'no-restricted-syntax': 0,
     'no-case-declarations': 0,
     'no-mixed-operators': 0,
@@ -58,7 +59,7 @@ module.exports = {
     'no-confusing-arrow': 0,
     // no-undef is not recommended for typescript projects
     // https://github.com/typescript-eslint/typescript-eslint/blob/master/docs/getting-started/linting/FAQ.md#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
-    'no-undef': 0,
+    'no-undef': 1,
     'curly': [0, 'all'],
     'computed-property-spacing': [2, 'never'],
     'object-curly-spacing': [2, 'always', {}],
@@ -69,7 +70,7 @@ module.exports = {
     // https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin/docs/rules/no-use-before-define.md#how-to-use
     'no-shadow': 'off',
     'no-redeclare': 'off',
-    'no-use-before-define': 'off',
+    'no-use-before-define': 1,
     // babel plugin
     'babel/no-unused-expressions': 0,
     // react plugin
@@ -91,13 +92,13 @@ module.exports = {
     'jsx-a11y/label-has-associated-control': 0,
     'jsx-a11y/mouse-events-have-key-events': 0,
     // typescript-eslint
-    //   '@typescript-eslint/interface-name-prefix': 0,
-    //   '@typescript-eslint/camelcase': 0,
-    //   '@typescript-eslint/no-unused-vars': [1, { 'ignoreRestSiblings': true }],
-    //   '@typescript-eslint/member-delimiter-style': 2,
-    //   '@typescript-eslint/no-shadow': ['error'],
-    //   '@typescript-eslint/no-redeclare': ['error'],
-    //   '@typescript-eslint/no-use-before-define': ['error', { 'functions': false }],
+    // '@typescript-eslint/interface-name-prefix': 0,
+    // '@typescript-eslint/camelcase': 0,
+    // '@typescript-eslint/no-unused-vars': [1, { 'ignoreRestSiblings': true }],
+    // '@typescript-eslint/member-delimiter-style': 2,
+    // '@typescript-eslint/no-shadow': ['error'],
+    // '@typescript-eslint/no-redeclare': ['error'],
+    // '@typescript-eslint/no-use-before-define': ['error', { 'functions': false }],
     // eslint-import-helpers
     'import-helpers/order-imports': [
       'error',

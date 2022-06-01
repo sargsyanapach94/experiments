@@ -3,18 +3,7 @@ import applayShadow from './applayShadow';
 import bendText from './bendText';
 import { drawBaseLine } from './helpers';
 
-const drawText = (ctx, attrs, options) => {
-  if (!attrs.text) return null;
-  // console.log(attrs);
-  ctx.font = `${attrs.fontSize}px ${attrs.font || 'Archivo Black'}`;
-
-  ctx.textBaseline = 'middle';
-  const measure = ctx.measureText(attrs.text);
-  drawBaseLine(ctx, attrs, measure);
-
-  if (attrs.bend) {
-    return bendText(ctx, attrs, measure);
-  }
+const drawSimpleText = (ctx, attrs, measure) => {
   let lastXPos = 0;
   const yPosition = measure.fontBoundingBoxAscent;
   for (let i = 0; i < attrs.text.length; ++i) {
@@ -37,6 +26,21 @@ const drawText = (ctx, attrs, options) => {
     width: measure.width + attrs.text.length * attrs.letterSpacing,
     height: measure.fontBoundingBoxAscent + measure.fontBoundingBoxDescent,
   };
+};
+
+const drawText = (ctx, attrs) => {
+  if (!attrs.text) return null;
+
+  ctx.font = `${attrs.fontSize}px ${attrs.font || 'Archivo Black'}`;
+  ctx.textBaseline = 'middle';
+  const measure = ctx.measureText(attrs.text);
+  drawBaseLine(ctx, attrs, measure);
+
+  if (attrs.bend) {
+    return bendText(ctx, attrs, measure);
+  }
+  
+  return drawSimpleText(ctx, attrs, measure);
 };
 
 export default drawText;

@@ -1,75 +1,80 @@
 import applayStroke from './applyStroke';
 import { degreesToRadians, drawArc } from './helpers';
 
-const { abs, PI, sin, cos, sign, max } = Math;
+const { abs, PI, sin, cos, max, sign } = Math;
 const SlyderMaxValue = 50;
 
-const getTextWidth = (measure, attrs) => measure.width + attrs.text.length * attrs.letterSpacing;
+const getCircleArcLength = (measure, attrs) => measure.width + attrs.text.length * attrs.letterSpacing;
 
 const getCircleRadius = (segmentAngle, arcLength) => abs((arcLength * 360) / (2 * PI * segmentAngle));
+
+const drawLetter = (ctx, attrs, arcAttrs) => {
+  const direction = sign(arcAttrs.segmentAngle);
+
+  const angleInRadians = degreesToRadians(attrs.letterAngle);
+
+  const letterX = arcAttrs.x - direction * arcAttrs.radius * cos(angleInRadians);
+  const letterY = arcAttrs.y + arcAttrs.radius * sin(angleInRadians);
+
+  ctx.fillStyle = attrs.fill || 'black';
+
+  const measure = ctx.measureText(attrs.letter);
+  const letterBBox = {
+    widthWithSpacing: measure.width + attrs.letterSpacing,
+    width: measure.width,
+    height: measure.fontBoundingBoxAscent + measure.fontBoundingBoxDescent,
+  };
+
+  const letterRotationAngle = degreesToRadians(90 - direction * attrs.letterAngle);
+  // ctx.rotate(radianAngle);
+  // ctx.fillText(letter, letterX, letterY)
+
+  ctx.save();
+  ctx.translate(letterX, letterY); // translate to the centerpoint you desire to rotate around
+  ctx.rotate(letterRotationAngle); // rotate by the desired angle
+
+  if (attrs.strokeWidth) applayStroke(ctx, attrs.letter, 0, 0, attrs);
+
+  ctx.fillText(attrs.letter, 0, 0);
+  ctx.restore(); // always clean up -- reset transformations to default
+
+  return letterBBox;
+};
 
 const bendText = (ctx, attrs, measure) => {
   const segmentAngle = (360 / SlyderMaxValue) * attrs.bend;
   const absSegmentAngle = abs(segmentAngle);
-  const arcLength = getTextWidth(measure, attrs);
+  const arcLength = getCircleArcLength(measure, attrs);
   const radius = getCircleRadius(segmentAngle, arcLength);
 
-  const simpleHeight = measure.fontBoundingBoxAscent + measure.fontBoundingBoxDescent;
+  const fontHeight = measure.fontBoundingBoxAscent + measure.fontBoundingBoxDescent;
   const chordLength = sin(degreesToRadians(absSegmentAngle / 2)) * radius * 2;
   const bbox = {
-    width: absSegmentAngle < 180 ? chordLength + simpleHeight / 2 : radius * 2 + simpleHeight / 2,
-    height: max(abs(radius - cos(degreesToRadians(absSegmentAngle / 2)) * radius), simpleHeight),
+    width: absSegmentAngle < 180 ? chordLength : radius * 2,
+    height: max(abs(radius - cos(degreesToRadians(absSegmentAngle / 2)) * radius), fontHeight),
   };
   const xDiff = bbox.width - measure.width + attrs.text.length * attrs.letterSpacing;
   // const yDiff = bbox.height -
   // let lastXPos = xDiff / 2;
-  const lastXPos = 0;
-  const yPosition = measure.fontBoundingBoxAscent;
 
-  const direction = sign(segmentAngle);
-  const startAngle = direction > 0 ? (180 - absSegmentAngle) / 2 : 180 + (180 - absSegmentAngle) / 2;
-  const endAngle = startAngle + absSegmentAngle;
-  const circuleAttrs = {
-    x: lastXPos + arcLength / 2,
-    y: yPosition - direction * (radius + cos(degreesToRadians(absSegmentAngle / 2)) * radius) / 2,
-    radius,
-    startAngle,
-    endAngle,
-    segmentAngle,
+  const position = {
+    x: 0,
+    y: measure.fontBoundingBoxAscent,
   };
-  drawArc(ctx, circuleAttrs);
+  const arcAttrs = drawArc(ctx, position, segmentAngle, arcLength, radius);
 
-  let letterAngle = startAngle;
+  let letterAngle = arcAttrs.startAngle;
 
   for (let i = 0; i < attrs.text.length; ++i) {
     const letter = attrs.text[i];
-    const measure = ctx.measureText(attrs.text[i]);
-    const radianAngle = degreesToRadians(90 - direction * letterAngle);
-    const letterX = circuleAttrs.x - direction * radius * cos(degreesToRadians(letterAngle));
-    const letterY = circuleAttrs.y + radius * sin(degreesToRadians(letterAngle));
+    const letterAttrs = {
+      ...attrs,
+      letter,
+      letterAngle,
+    };
+    const { widthWithSpacing } = drawLetter(ctx, letterAttrs, arcAttrs);
 
-    ctx.fillStyle = attrs.fill || 'black';
-    const letterSpace = measure.width + attrs.letterSpacing;
-
-    // ctx.rotate(radianAngle);
-    // ctx.fillText(letter, letterX, letterY)
-
-    ctx.save();
-    // translate to the centerpoint you desire to rotate around
-    ctx.translate(letterX, letterY);
-    // rotate by the desired angle
-    ctx.rotate(radianAngle);
-
-    if (attrs.strokeWidth) {
-      applayStroke(ctx, letter, 0, 0, attrs);
-    }
-    // draw the text on the canvas
-    ctx.fillText(letter, 0, 0);
-
-    // always clean up -- reset transformations to default
-    ctx.restore();
-
-    const diffAngle = (letterSpace * 360) / (2 * PI * radius);
+    const diffAngle = (widthWithSpacing * 360) / (2 * PI * radius);
     letterAngle += diffAngle;
   }
 
