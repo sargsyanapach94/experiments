@@ -1,5 +1,11 @@
+export const settingTypes = {
+  boolean: 'boolean',
+  range: 'range',
+};
+
 export const settings = [
   {
+    type: settingTypes.range,
     title: 'Font Size',
     key: 'fontSize',
     defaultValue: 50,
@@ -7,6 +13,7 @@ export const settings = [
     max: 180,
   },
   {
+    type: settingTypes.range,
     title: 'Letter spacing',
     key: 'letterSpacing',
     defaultValue: 0,
@@ -14,6 +21,7 @@ export const settings = [
     max: 20,
   },
   {
+    type: settingTypes.range,
     title: 'Strok size',
     key: 'strokeWidth',
     defaultValue: 0,
@@ -21,17 +29,25 @@ export const settings = [
     max: 20,
   },
   {
+    type: settingTypes.range,
     title: 'Bend',
     key: 'bend',
     defaultValue: 0,
     min: -50,
     max: 50,
   },
-];
 
-export const booleanSetting = [
   {
-    title: 'Letter spacing',
-    key: 'letterSpacing',
+    type: settingTypes.boolean,
+    title: 'Bold',
+    key: 'bold',
+    defaultValue: false,
+  },
+
+  {
+    type: settingTypes.boolean,
+    title: 'Italic',
+    key: 'italic',
+    defaultValue: false,
   },
 ];

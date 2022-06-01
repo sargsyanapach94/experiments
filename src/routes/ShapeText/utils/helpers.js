@@ -7,7 +7,7 @@ export const drawRect = (ctx, bbox, color) => {
   ctx.strokeStyle = color || 'pink';
   ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.rect(bbox.x1, bbox.y1, bbox.x2 - bbox.x1, bbox.y2 - bbox.y1);
+  ctx.rect(0, bbox.y1, bbox.x2 - bbox.x1, bbox.y2 - bbox.y1);
   ctx.stroke();
   ctx.restore();
 };
@@ -76,9 +76,14 @@ export const drawText = (ctx, attrs, options) => {
 };
 
 export const loadFont = async (fontName, path) => {
-  const junctionFont = await new FontFace(fontName, `url(${path})`);
+  const junctionFont = new FontFace(fontName, `url(${path})`);
   if (!junctionFont.family) return;
-  const loadedFace = await junctionFont.load();
-  document.fonts.add(loadedFace);
-  return loadedFace;
+  try {
+    const loadedFace = await junctionFont.load();
+    document.fonts.add(loadedFace);
+    return loadedFace;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log(error);
+  }
 };
