@@ -2,7 +2,7 @@ import applayStroke from '../applyStroke';
 import applayShadow from '../applayShadow';
 import { drawBaseLine } from '../helpers';
 
-const { max } = Math;
+const { max, ceil } = Math;
 
 const drawLine = (ctx, attrs) => {
   let lineWidth = 0;
@@ -19,7 +19,7 @@ const drawLine = (ctx, attrs) => {
     ctx.fillText(character, lastXPos, attrs.y);
 
     lastXPos += measure.width + attrs.letterSpacing;
-    lineWidth += measure.width;
+    lineWidth += ceil(measure.width);
     if (i !== attrs.text.length - 1) { // dont need to add letterSpacing for last character
       lineWidth += attrs.letterSpacing;
     }
