@@ -5,7 +5,7 @@ import drawText from '../utils/drawText';
 const sceneFunc = (ctx, shape) => {
   const shapTextAttrs = shape.getAttrs();
   const textMetrics = drawText(ctx, shapTextAttrs);
-  
+
   if (!textMetrics) return null;
 
   shape.setAttrs({
@@ -25,31 +25,24 @@ const hitFunc = (ctx, shape) => {
   ctx.fillStrokeShape(shape);
 };
 
-// const font = 'Gravura Com';
-// const font = 'Archivo Black';
-const font = 'RixGangnamDaero Black';
-// const font = 'Monoton';
-
-const text = 'The quick brown fox';
-// const text = 'The quick brown fox jumps over the lazy dog';
-
 const createShapeText = defaultAttrs => {
   const initialAttrs = {
-    text,
     x: 100,
     y: 200,
     draggable: true,
     stroke: 'red',
     // shadowColor: 'blue',
     fontSize: 50,
-    font,
     rotation: 0,
     opacity: 1,
     letterSpacing: 0,
     // scale: {x: 0.1,y:0.1},
   };
 
-  const attrs = defaultAttrs || initialAttrs;
+  const attrs = {
+    ...defaultAttrs,
+    ...initialAttrs,
+  };
 
   return new Konva.Shape({
     ...attrs,

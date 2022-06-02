@@ -10,11 +10,17 @@ import createTransformer from './konvaUtils/createTransformer';
 import useSetupStage from './hooks/useSetupStage';
 import useLoadFonts from './hooks/useLoadFonts';
 
+const defaultText = 'The quick brown fox';
+// const defaultText = 'The quick brown fox jumps over the lazy dog';
+
+const font = 'Gravura Com';
+// const font = 'Archivo Black';
+// const font = 'RixGangnamDaero Black';
+// const font = 'Monoton';
+
 function ShapeText() {
   const [shapeText, setShapeText] = useState(null);
-
   const isFontsLoaded = useLoadFonts();
-
   const { stage, layer } = useSetupStage();
 
   useEffect(() => {
@@ -23,7 +29,7 @@ function ShapeText() {
     const lines = createLines(stage.getSize());
     layer.add(...lines);
 
-    const shapeText = createShapeText();
+    const shapeText = createShapeText({ text: defaultText, font });
     layer.add(shapeText);
 
     const tr = createTransformer();
@@ -45,7 +51,7 @@ function ShapeText() {
       <h3>Shape Text</h3>
       <label>
         Text:
-        <textarea onChange={({ target }) => { changeTextSetting(target.value, 'text'); }} />
+        <textarea defaultValue={defaultText} onChange={({ target }) => { changeTextSetting(target.value, 'text'); }} />
       </label>
       {settings.map(setting => {
         if (setting.type === settingTypes.range) { return <MyInputRange setting={setting} onChange={changeTextSetting} key={setting.key} />; }

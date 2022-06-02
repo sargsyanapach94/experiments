@@ -22,6 +22,14 @@ export const settings = [
   },
   {
     type: settingTypes.range,
+    title: 'Line spacing',
+    key: 'lineSpacing',
+    defaultValue: 0,
+    min: -50,
+    max: 150,
+  },
+  {
+    type: settingTypes.range,
     title: 'Strok size',
     key: 'strokeWidth',
     defaultValue: 0,

@@ -47,9 +47,9 @@ export const drawBBox = (ctx, attrs, measure) => {
 export const drawBaseLine = (ctx, attrs, measure) => {
   drawRect(ctx, {
     x1: measure.actualBoundingBoxLeft,
-    y1: measure.fontBoundingBoxAscent,
+    y1: attrs.y,
     x2: measure.actualBoundingBoxRight,
-    y2: measure.fontBoundingBoxAscent,
+    y2: attrs.y,
   }, attrs.color || 'green');
 };
 

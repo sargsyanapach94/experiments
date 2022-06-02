@@ -1,5 +1,5 @@
-import applayStroke from './applyStroke';
-import { degreesToRadians, drawArc } from './helpers';
+import applayStroke from '../applyStroke';
+import { degreesToRadians, drawArc } from '../helpers';
 
 const { abs, PI, sin, cos, max, sign } = Math;
 const SlyderMaxValue = 50;
@@ -41,7 +41,11 @@ const drawLetter = (ctx, attrs, arcAttrs) => {
   return letterBBox;
 };
 
-const bendText = (ctx, attrs, measure) => {
+const bendText = (ctx, attrs) => {
+  ctx.font = ` ${attrs.bold} ${attrs.italic} ${attrs.fontSize}px ${attrs.font || 'Archivo Black'}`;
+
+  const measure = ctx.measureText(attrs.text);
+
   const segmentAngle = (360 / SlyderMaxValue) * attrs.bend;
   const absSegmentAngle = abs(segmentAngle);
   const arcLength = getCircleArcLength(measure, attrs);
@@ -54,8 +58,6 @@ const bendText = (ctx, attrs, measure) => {
     height: max(abs(radius - cos(degreesToRadians(absSegmentAngle / 2)) * radius), fontHeight),
   };
   const xDiff = bbox.width - measure.width + attrs.text.length * attrs.letterSpacing;
-  // const yDiff = bbox.height -
-  // let lastXPos = xDiff / 2;
 
   const position = {
     x: 0,
