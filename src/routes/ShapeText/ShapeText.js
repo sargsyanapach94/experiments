@@ -11,12 +11,15 @@ import useSetupStage from './hooks/useSetupStage';
 import useLoadFonts from './hooks/useLoadFonts';
 
 const defaultText = 'The quick brown fox';
+// const defaultText = 'sim simimsim iii mmmimi';
 // const defaultText = 'The quick brown fox jumps over the lazy dog';
 
 const font = 'Gravura Com';
 // const font = 'Archivo Black';
 // const font = 'RixGangnamDaero Black';
 // const font = 'Monoton';
+const bend = 0;
+const fontSize = 50;
 
 function ShapeText() {
   const [shapeText, setShapeText] = useState(null);
@@ -29,7 +32,7 @@ function ShapeText() {
     const lines = createLines(stage.getSize());
     layer.add(...lines);
 
-    const shapeText = createShapeText({ text: defaultText, font });
+    const shapeText = createShapeText({ text: defaultText, font, bend, fontSize });
     layer.add(shapeText);
 
     const tr = createTransformer();

@@ -40,8 +40,8 @@ const createShapeText = defaultAttrs => {
   };
 
   const attrs = {
-    ...defaultAttrs,
     ...initialAttrs,
+    ...defaultAttrs,
   };
 
   return new Konva.Shape({
